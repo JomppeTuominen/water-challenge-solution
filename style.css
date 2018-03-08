@@ -1,5 +1,22 @@
-#canvas {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+body {
+  background-color: #e3f2fd;
 }
+* {
+  font-family: monospace;
+}
+#canvas {
+}
+#canvas-container {
+  max-width: 100%;
+  overflow: auto;
+  margin: 20% auto 0 auto;
+}
+#container {
+  position: fixed;
+  top: 10px;
+}
+/*h3 {
+  position: fixed;
+  left: 50%;
+  margin-left: -60px;
+}*/

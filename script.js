@@ -1,49 +1,48 @@
+"use strict";
 const BLOCK_SIZE = 50;
+const COLUMN_COLOR = "#212121";
+const WATER_COLOR = "#64B5F6";
 let waters = 0;
+let CANVAS, CTX;
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  CANVAS = document.getElementById("canvas");
+  CTX = CANVAS.getContext("2d");
+  document.getElementById("draw-btn").addEventListener("click", function() {
+    let input = document.getElementById("columns-count");
+    let val = getUserValue();
+    start(val);
+  });
+  start(20);
+});
+
+const getUserValue = () => {
+  let input = document.getElementById("columns-count");
+  let val = input.value;
+  if (val < 3) val = 3;
+  else if (val > 99) val = 99;
+  input.value = val;
+  return val;
+};
+
+const renderResultText = () => {
+  let elem = document.getElementById("count");
+  elem.innerHTML = ` ${waters}`;
+};
 const paint = (index, val, waterVal) => {
-  let canvas = document.getElementById("canvas");
-  let ctx = canvas.getContext("2d");
   let columnH = val;
-  ctx.fillStyle = "blue";
+  CTX.fillStyle = WATER_COLOR;
   let x = index * BLOCK_SIZE;
-  let y = canvas.height - columnH * BLOCK_SIZE - waterVal * BLOCK_SIZE;
+  let y = CANVAS.height - columnH * BLOCK_SIZE - waterVal * BLOCK_SIZE;
 
   let w = BLOCK_SIZE;
   let h = waterVal * BLOCK_SIZE;
   waters += waterVal;
-  //ctx.fillStyle = "blue";
-  let start = canvas.height;
+  let start = CANVAS.height;
 
-  //}
+  CTX.fillRect(x, y, w, h);
+};
 
-  ctx.fillRect(x, y, w, h);
-  // start painting
-  //y = canvas.height;
-  //let y2 = canvas.height;
-  //setInterval(() => {
-  //console.log(h);
-  //y = canvas.height;
-  //console.log(y);
-  //if (y2 > y) y2--;
-  //renderAnimation(ctx, x, y2, w, -1);
-  //}, 60 / 1000);
-  //renderAnimation(ctx, x, y, w, h);
-  console.log("finished");
-};
-const renderAnimation = (ctx, x, y, w, h) => {
-  //for (let i = h; i >= 0; i--) {
-  //setInterval(() => {
-  ctx.fillStyle = "blue";
-  ctx.fillRect(x, y, w, h);
-  //}, 1000);
-  //}
-  // ctx.fillRect(x, y, w, h);
-  /*setInterval(() => {
-    requestAnimationFrame(() => {
-      console.log("hep");
-    });
-  }, 60 / 1000);*/
-};
 const goLeft = (from, arr) => {
   let slice = arr.slice(0, from);
   let maxOfLeft = Math.max(...slice);
@@ -63,6 +62,7 @@ const goLeft = (from, arr) => {
     paint(i, val, waterVal);
   }
 };
+
 const goRight = (from, arr) => {
   let slice = arr.slice(from + 1, arr.length);
   let maxOfRight = Math.max(...slice);
@@ -82,58 +82,44 @@ const goRight = (from, arr) => {
     paint(i, val, waterVal);
   }
 };
-const renderColumns = arr => {
-  let canvas = document.getElementById("canvas");
-  let ctx = canvas.getContext("2d");
 
-  ctx.font = "20px Georgia";
-  ctx.textAlign = "center";
-  //arr = [1, 0, 2];
+const renderColumns = arr => {
   arr.forEach((n, index) => {
     if (n > 0) {
-      ctx.fillRect(
+      CTX.fillStyle = COLUMN_COLOR;
+      CTX.fillRect(
         index * BLOCK_SIZE,
-        canvas.height - n * BLOCK_SIZE,
+        CANVAS.height - n * BLOCK_SIZE,
         BLOCK_SIZE,
         BLOCK_SIZE * n
-      );
-
-      ctx.fillText(
-        n,
-        index * BLOCK_SIZE + BLOCK_SIZE / 2,
-        canvas.height - n * BLOCK_SIZE - BLOCK_SIZE / 4
       );
     }
   });
 };
-const generateColumnArray = () => {
-  let columnCount = 20;
+
+const generateColumnArray = columnCount => {
   let arr = [];
   for (let i = 0; i < columnCount; i++) {
     if (i > 0 && arr[i - 1] > 0) {
       arr.push(0);
-    } else arr.push(Math.floor(Math.random() * 10));
+    } else arr.push(Math.floor(Math.random() * 12));
   }
   return arr;
 };
-const setCanvasSize = (canvas, arr) => {
-  canvas.width = arr.length * BLOCK_SIZE;
-};
-document.addEventListener("DOMContentLoaded", function(event) {
-  let canvas = document.getElementById("canvas");
-  let ctx = canvas.getContext("2d");
 
-  let arr = generateColumnArray();
-  setCanvasSize(canvas, arr);
+const setCanvasSize = arr => {
+  CANVAS.width = arr.length * BLOCK_SIZE;
+};
+
+const start = columnCount => {
+  waters = 0;
+  let arr = generateColumnArray(columnCount);
+  setCanvasSize(arr);
   renderColumns(arr);
 
   let max = Math.max(...arr);
   let startIndex = arr.indexOf(max);
-  let waterUnits = 0;
   if (startIndex > 0) goLeft(startIndex, arr);
   if (startIndex < arr.length - 1) goRight(startIndex, arr);
-
-  ctx.fillStyle = "black";
-  ctx.fillText(`Units of water: ${waters}`, canvas.width / 2, 50);
-  console.log(arr);
-});
+  renderResultText();
+};

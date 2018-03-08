@@ -11,7 +11,17 @@
 </head>
 
 <body>
-    <canvas id="canvas" width="500" height="700"></canvas>
+    <div id="container">
+        Columns:
+        <input min="3" max="99" maxlength="2" placeholder="20" type="number" id="columns-count">
+        <button id="draw-btn">Draw!</button>
+        <h3 id="">Result:
+            <span id="count"></span>
+        </h3>
+    </div>
+    <div id="canvas-container">
+        <canvas id="canvas" width="500" height="700"></canvas>
+    </div>
 </body>
 
 </html>
